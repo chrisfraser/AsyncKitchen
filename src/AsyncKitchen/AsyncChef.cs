@@ -7,60 +7,73 @@ namespace AsyncKitchen
 {
     public class AsyncChef
     {
-        public static async void MakeTeaAndCarrotsAsync()
+        private Stopwatch _stopwatch;
+
+        public async Task<string> MakeTeaAndCarrotsAsync()
         {
             Console.WriteLine("------------------AsyncChef------------------");
-            Stopwatch stopwatch = Stopwatch.StartNew();
+            _stopwatch = Stopwatch.StartNew();
 
-            Task makeTea = MakeTea(stopwatch);
+            Task<string> makeTea = MakeTea();
+            Task<string> bakeCarrots = MakeBakedCarrots();
 
-            Task bakeCarrots = BakeCarrots(stopwatch);
+            string dish = Serve(await makeTea, await bakeCarrots);
 
-            await Task.WhenAll(makeTea, bakeCarrots);
-
-            Serve(stopwatch);
-
-            Console.WriteLine("Done: {0}ms", stopwatch.ElapsedMilliseconds);
+            Console.WriteLine("Done: {0}ms", _stopwatch.ElapsedMilliseconds);
             Console.WriteLine("---------------------------------------------");
 
-            stopwatch.Stop();
+            _stopwatch.Stop();
+
+            return dish;
         }
 
-        private static async Task MakeTea(Stopwatch stopwatch)
+        private async Task<string> MakeTea()
         {
-            await BoilKettle(stopwatch);
+            // Put the kettle on then return control to returning method
+            await BoilKettle();
+
+            // Make tea once kettle has boiled
             Console.WriteLine("Start: MakingTea");
-            await Task.Delay(500);
-            Console.WriteLine("End: MakingTea {0}ms", stopwatch.ElapsedMilliseconds);
+            Thread.Sleep(500);
+            Console.WriteLine("End: MakingTea {0}ms", _stopwatch.ElapsedMilliseconds);
+
+            return "tea";
         }
 
-        private static async Task BoilKettle(Stopwatch stopwatch)
+        private async Task BoilKettle()
         {
             Console.WriteLine("Start: BoilingKettle");
-            await Task.Delay(1000);
-            Console.WriteLine("End: BoilingKettle {0}ms", stopwatch.ElapsedMilliseconds);
+            await Task.Delay(1000); // Return control to calling method
+            Console.WriteLine("End: BoilingKettle {0}ms", _stopwatch.ElapsedMilliseconds);
         }
 
-        private static async Task BakeCarrots(Stopwatch stopwatch)
+        private async Task<string> MakeBakedCarrots()
         {
-            ChopCarrots(stopwatch);
+            // Chop carrots
+            ChopCarrots();
+
+            // Put carrots in the oven
             Console.WriteLine("Start: BakingCarrots");
-            await Task.Delay(500);
-            Console.WriteLine("End: BakingCarrots {0}ms", stopwatch.ElapsedMilliseconds);
+            await Task.Delay(1500); // Return control to calling method
+            Console.WriteLine("End: BakingCarrots {0}ms", _stopwatch.ElapsedMilliseconds);
+
+            return "baked carrots";
         }
 
-        private static void ChopCarrots(Stopwatch stopwatch)
+        private void ChopCarrots()
         {
             Console.WriteLine("Start: ChoppingCarrots");
-            Thread.Sleep(500); 
-            Console.WriteLine("End: ChoppingCarrots {0}ms", stopwatch.ElapsedMilliseconds);
+            Thread.Sleep(500);
+            Console.WriteLine("End: ChoppingCarrots {0}ms", _stopwatch.ElapsedMilliseconds);
         }
 
-        private static void Serve(Stopwatch stopwatch)
+        private string Serve(string tea, string bakedCarrots)
         {
             Console.WriteLine("Start: Serving");
             Thread.Sleep(500);
-            Console.WriteLine("End: Serving {0}ms", stopwatch.ElapsedMilliseconds);
+            Console.WriteLine("End: Serving {0}ms", _stopwatch.ElapsedMilliseconds);
+
+            return String.Format("Hot {0} and tasty {1}", tea, bakedCarrots);
         }
     }
 }

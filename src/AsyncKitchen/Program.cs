@@ -1,20 +1,30 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Nito.AsyncEx;
 
 namespace AsyncKitchen
 {
-    class Program
+    static class Program
     {
-        static void Main(string[] args)
+        private static void Main()
         {
+            AsyncContext.Run(() => MainAsync());
+        }
+
+        static async void MainAsync()
+        {
+            // Setup console
             Console.ForegroundColor = ConsoleColor.White;
             Console.WindowHeight = 30;
 
-            Chef.MakeTeaAndCarrots();
-            AsyncChef.MakeTeaAndCarrotsAsync();
+            // Synchronous Chef
+            var syncChef = new Chef();
+            Console.WriteLine(syncChef.MakeTeaAndCarrots());
+
+            Console.WriteLine();
+
+            // Asynchronous Chef
+            var asyncChef = new AsyncChef();
+            Console.WriteLine(await asyncChef.MakeTeaAndCarrotsAsync());
 
             Console.ReadKey();
         }

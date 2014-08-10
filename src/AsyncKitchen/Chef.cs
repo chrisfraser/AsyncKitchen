@@ -6,59 +6,71 @@ namespace AsyncKitchen
 {
     public class Chef
     {
-        public static void MakeTeaAndCarrots()
+        private Stopwatch _stopwatch;
+
+        public string MakeTeaAndCarrots()
         {
             Console.WriteLine("--------------------Chef---------------------");
 
-            var stopwatch = Stopwatch.StartNew();
+            _stopwatch = Stopwatch.StartNew();
 
-            MakeTea(stopwatch);
+            string tea = MakeTea();
+            string bakedCarrots = MakeBakeCarrots();
 
-            BakeCarrots(stopwatch);
+            var dish = Serve(tea, bakedCarrots);
 
-            Serve(stopwatch);
-
-            Console.WriteLine("Done: {0}ms", stopwatch.ElapsedMilliseconds);
+            Console.WriteLine("Done: {0}ms", _stopwatch.ElapsedMilliseconds);
             Console.WriteLine("---------------------------------------------");
 
-            stopwatch.Stop();
+            _stopwatch.Stop();
+
+            return dish;
         }
 
-        private static void MakeTea(Stopwatch stopwatch)
+        private string MakeTea()
         {
-            BoilKettle(stopwatch);
+            // Boil kettle
+            BoilKettle();
+
             Console.WriteLine("Start: MakingTea");
             Thread.Sleep(500);
-            Console.WriteLine("End: MakingTea {0}ms", stopwatch.ElapsedMilliseconds);
+            Console.WriteLine("End: MakingTea {0}ms", _stopwatch.ElapsedMilliseconds);
+
+            return "tea";
         }
 
-        private static void BoilKettle(Stopwatch stopwatch)
+        private void BoilKettle()
         {
             Console.WriteLine("Start: BoilingKettle");
-            Thread.Sleep(1000);
-            Console.WriteLine("End: BoilingKettle {0}ms", stopwatch.ElapsedMilliseconds);
+            Thread.Sleep(1000); // Watch while boiling
+            Console.WriteLine("End: BoilingKettle {0}ms", _stopwatch.ElapsedMilliseconds);
         }
 
-        private static void BakeCarrots(Stopwatch stopwatch)
+        private string MakeBakeCarrots()
         {
-            ChopCarrots(stopwatch);
+            ChopCarrots();
+
             Console.WriteLine("Start: BakingCarrots");
-            Thread.Sleep(500);
-            Console.WriteLine("End: BakingCarrots {0}ms", stopwatch.ElapsedMilliseconds);
+            Thread.Sleep(1500); // Watch oven
+            Console.WriteLine("End: BakingCarrots {0}ms", _stopwatch.ElapsedMilliseconds);
+
+            return "baked carrots";
         }
 
-        private static void ChopCarrots(Stopwatch stopwatch)
+        private void ChopCarrots()
         {
             Console.WriteLine("Start: ChoppingCarrots");
             Thread.Sleep(500);
-            Console.WriteLine("End: ChoppingCarrots {0}ms", stopwatch.ElapsedMilliseconds);
+            Console.WriteLine("End: ChoppingCarrots {0}ms", _stopwatch.ElapsedMilliseconds);
         }
 
-        private static void Serve(Stopwatch stopwatch)
+        private string Serve(string tea, string bakedCarrots)
         {
             Console.WriteLine("Start: Serving");
             Thread.Sleep(500);
-            Console.WriteLine("End: Serving {0}ms", stopwatch.ElapsedMilliseconds);
+            Console.WriteLine("End: Serving {0}ms", _stopwatch.ElapsedMilliseconds);
+
+            return String.Format("Cold {0} and tasty {1}", tea, bakedCarrots);
         }
     }
 }
